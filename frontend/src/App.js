@@ -5,8 +5,8 @@ const GongExpansionTracker = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
   const [keywords, setKeywords] = useState([
-    'expansion', 'upgrade', 'additional features', 'more users', 'enterprise plan',
-    'scale up', 'add-on', 'premium', 'increase capacity', 'additional licenses'
+    'expansion', 'international', 'DDP', 'DDU', 'international markets',
+    'cross border', 'UK Fulfillment', 'Netherlands Fulfillment', 'Canada Fulfillment', 'Australia Fulfillment'
   ]);
   const [newKeyword, setNewKeyword] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
