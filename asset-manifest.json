@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/gong-expansion-tracker/static/css/main.169e86d9.css",
+    "main.js": "/gong-expansion-tracker/static/js/main.c16cfab5.js",
+    "index.html": "/gong-expansion-tracker/index.html",
+    "main.169e86d9.css.map": "/gong-expansion-tracker/static/css/main.169e86d9.css.map",
+    "main.c16cfab5.js.map": "/gong-expansion-tracker/static/js/main.c16cfab5.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.169e86d9.css",
+    "static/js/main.c16cfab5.js"
+  ]
+}
