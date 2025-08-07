@@ -29,12 +29,113 @@ const EXPANSION_KEYWORDS = [
 ];
 
 // Solution Manager mappings - UPDATE THESE FOR YOUR ORGANIZATION
-const MERCHANT_SM_MAPPING = {
-  'TECH-001': { sm: 'Mike Chen', email: 'mike.c@shipbob.com' },
-  'GROW-002': { sm: 'Emma Rodriguez', email: 'emma.r@shipbob.com' },
-  'ENT-003': { sm: 'Tom Wilson', email: 'tom.w@shipbob.com' }
-  // Add your actual merchant-SM mappings here
+// REPLACE the MERCHANT_SM_MAPPING section in your server.js with this complete mapping:
+
+// Comprehensive merchant mapping based on your CSV data
+const MERCHANT_MAPPING = {
+  // Andrew Costello's merchants
+  'semaine-health': { companyName: 'Semaine Health', msm: 'Jeremy Whitaker', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'grinding-gear-games': { companyName: 'Grinding Gear Games Ltd', msm: 'Brian Totten', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'esther-perels-workshop': { companyName: "Esther Perel's Workshop", msm: 'Cole Shubert', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'forvr-mood': { companyName: 'FORVR Mood', msm: 'Lauren Hookham', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'malezia': { companyName: 'Malezia', msm: 'Octavia Czapla', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'nordic-healthy-living': { companyName: 'Nordic Healthy Living', msm: 'Angelica Allen', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'parentgiving': { companyName: 'Parentgiving', msm: 'Jim Spangler', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'petsmont': { companyName: 'Petsmont', msm: 'Henrique Ferreira', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'sfh': { companyName: 'SFH', msm: 'Maverick Morgan', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'lignetics': { companyName: 'Lignetics Inc.', msm: 'NoDataFound', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'grvi': { companyName: 'Grövi', msm: 'Joe DiRusso', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'equilibria': { companyName: 'Equilibria', msm: 'Nick Hendricks', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'lifeforce-digital': { companyName: 'Lifeforce Digital Inc.', msm: 'Richie Miller', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'dossier': { companyName: 'Dossier', msm: 'Ryan Bessert', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'petlab-co': { companyName: 'Petlab Co', msm: 'Kevin Cliggett', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+  'sidemen-usa': { companyName: 'Sidemen USA', msm: 'Kevin Marvinac', sm: 'Andrew Costello', smEmail: 'acostello@shipbob.com' },
+
+  // Bryan Combest's merchants  
+  'mosaic-wellness': { companyName: 'Mosaic Wellness', msm: 'Nick Hendricks', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'nisim': { companyName: 'Nisim', msm: 'Kevin Marvinac', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'ombre': { companyName: 'Ombre', msm: 'NoDataFound', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'reshoevn8r': { companyName: 'Reshoevn8r', msm: 'Pete Cashen', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'rewind-hair-color': { companyName: 'Rewind Hair Color', msm: 'Kevin Marvinac', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'bartesian': { companyName: 'Bartesian', msm: 'Pete Cashen', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'better-alt': { companyName: 'Better Alt', msm: 'Rob Leonard', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'pawcom': { companyName: 'Paw.com', msm: 'Pete Cashen', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'castle-flexx': { companyName: 'Castle Flexx', msm: 'Shipton Bogle', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'finisher-secrets': { companyName: 'Finisher Secrets', msm: 'Jeff Kline', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'alkaline-superfoods': { companyName: 'Alkaline Superfoods', msm: 'Cole Shubert', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'bare-hands': { companyName: 'Bare Hands', msm: 'Omar Abdulla', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'braintap': { companyName: 'BrainTap, Inc', msm: 'Octavia Czapla', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'deltahub': { companyName: 'DELTAHUB', msm: 'Mud Ahmed', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'donors-choose': { companyName: 'DonorsChoose', msm: 'Aaron Hodes', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+  'sharkbanz': { companyName: 'Sharkbanz', msm: 'Joe DiRusso', sm: 'Bryan Combest', smEmail: 'bcombest@shipbob.com' },
+
+  // Dave Haran's merchants
+  'animalhouse-fitness': { companyName: 'Animalhouse Fitness', msm: 'Mud Ahmed', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'brucebolt': { companyName: 'BRUCE+BOLT LLC', msm: 'Aaron Hodes', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'day-one-industries': { companyName: 'Day One Industries LLC', msm: 'Frank Baer', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'prism-health': { companyName: 'Prism Health (Emory)', msm: 'Nick Hendricks', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'ez-bombs': { companyName: 'EZ Bombs', msm: 'Pete Cashen', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'friday-labs': { companyName: 'Friday Labs LLC', msm: 'Brian Totten', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'megababe': { companyName: 'Megababe', msm: 'Joel Bebermeyer', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'smarthockey': { companyName: 'Smarthockey', msm: 'Sophie Skarzynski', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'wellbel': { companyName: 'WellBel Inc', msm: 'Mud Ahmed', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'zbiotics': { companyName: 'ZBiotics', msm: 'Brian Hruskocy', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'aswe-move': { companyName: 'AsWeMove Inc.', msm: 'Shipton Bogle', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'culturelle-i-health': { companyName: 'Culturelle i-health, INC', msm: 'Aaron Hodes', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'madein': { companyName: 'MadeIn', msm: 'Nick Hendricks', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'old-world-christmas': { companyName: 'Old World Christmas', msm: 'Nick Hendricks', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'swissklip-usa': { companyName: 'Swissklip USA Inc', msm: 'Aaron Hodes', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' },
+  'cards-against-humanity': { companyName: 'Cards Against Humanity', msm: 'Bill Shipley', sm: 'Dave Haran', smEmail: 'dharan@shipbob.com' }
 };
+
+// Updated Solution Managers list for frontend
+const SOLUTION_MANAGERS = ["Andrew Costello", "Bryan Combest", "Dave Haran"];
+
+// Helper function to find merchant by company name or domain
+function findMerchantInfo(parties, callTitle = '') {
+  if (!parties || parties.length === 0) {
+    return null;
+  }
+
+  // Method 1: Find by email domain
+  const externalParty = parties.find(party => 
+    party.emailAddress && !party.emailAddress.includes('@shipbob.com')
+  );
+
+  if (externalParty) {
+    const domain = externalParty.emailAddress.split('@')[1];
+    const domainKey = domain.toLowerCase().replace(/[^a-z0-9]/g, '-');
+    
+    let merchantInfo = MERCHANT_MAPPING[domainKey];
+    if (merchantInfo) {
+      return { ...merchantInfo, email: externalParty.emailAddress, method: 'domain' };
+    }
+  }
+
+  // Method 2: Find by company name in call title
+  if (callTitle) {
+    const titleLower = callTitle.toLowerCase();
+    for (const [key, merchant] of Object.entries(MERCHANT_MAPPING)) {
+      const companyLower = merchant.companyName.toLowerCase();
+      if (titleLower.includes(companyLower) || companyLower.includes(titleLower)) {
+        return { ...merchant, email: externalParty?.emailAddress || 'unknown@merchant.com', method: 'title' };
+      }
+    }
+  }
+
+  // Method 3: Find by participant name
+  if (externalParty && externalParty.name) {
+    const nameLower = externalParty.name.toLowerCase();
+    for (const [key, merchant] of Object.entries(MERCHANT_MAPPING)) {
+      const companyLower = merchant.companyName.toLowerCase();
+      if (nameLower.includes(companyLower) || companyLower.includes(nameLower)) {
+        return { ...merchant, email: externalParty.emailAddress, method: 'name' };
+      }
+    }
+  }
+
+  return null;
+}
 
 // In-memory storage (use a database in production)
 let opportunities = [];
