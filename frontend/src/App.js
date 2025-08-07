@@ -1,97 +1,99 @@
 import React, { useState, useEffect } from 'react';
-import { Search, AlertTriangle, CheckCircle, Users, Calendar, ArrowRight, Filter, Settings, Bell } from 'lucide-react';
+import { Search, AlertTriangle, CheckCircle, Users, Calendar, ArrowRight, Filter, Settings, Bell, Play } from 'lucide-react';
 
 const GongExpansionTracker = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
-  const [keywords, setKeywords] = useState([
-    'expansion', 'international', 'DDP', 'DDU', 'international markets',
-    'cross border', 'UK Fulfillment', 'Netherlands Fulfillment', 'Canada Fulfillment', 'Australia Fulfillment'
-  ]);
+  const [keywords, setKeywords] = useState([]);
   const [newKeyword, setNewKeyword] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedSM, setSelectedSM] = useState('all');
   const [loading, setLoading] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [lastScanResult, setLastScanResult] = useState(null);
+  const [connectionStatus, setConnectionStatus] = useState('unknown');
 
-  // Mock data - in real implementation, this would come from Gong API
-  const mockOpportunities = [
-    {
-      id: 1,
-      merchant: "TechCorp Solutions",
-      merchantId: "TECH-001",
-      callDate: "2025-08-03",
-      callDuration: "45 mins",
-      msm: "Sarah Johnson",
-      msmEmail: "sarah.j@company.com",
-      assignedSM: "Mike Chen",
-      smEmail: "mike.c@company.com",
-      transcript: "We've been growing rapidly and our current plan is getting tight. We're looking at expansion into international markets, particularly the UK and Netherlands. We need DDP and DDU options for cross border shipping.",
-      detectedKeywords: ["expansion", "international markets", "UK", "Netherlands", "DDP", "DDU", "cross border"],
-      opportunityScore: 8.5,
-      status: "pending",
-      callRecordingUrl: "https://gong.io/call/12345",
-      attendees: ["Sarah Johnson (MSM)", "John Smith (Merchant)", "Lisa Wong (Merchant)"],
-      smPresent: false,
-      flaggedAt: "2025-08-03T10:30:00Z"
-    },
-    {
-      id: 2,
-      merchant: "GrowthStart Inc",
-      merchantId: "GROW-002",
-      callDate: "2025-08-02",
-      callDuration: "32 mins",
-      msm: "David Liu",
-      msmEmail: "david.l@company.com",
-      assignedSM: "Emma Rodriguez",
-      smEmail: "emma.r@company.com",
-      transcript: "Our team is expanding internationally and we're hitting the limits of our current subscription. We need Canada Fulfillment and Australia Fulfillment centers for our cross border operations.",
-      detectedKeywords: ["expansion", "international", "Canada Fulfillment", "Australia Fulfillment", "cross border"],
-      opportunityScore: 9.2,
-      status: "acknowledged",
-      callRecordingUrl: "https://gong.io/call/12346",
-      attendees: ["David Liu (MSM)", "Alex Chen (Merchant)", "Sarah Park (Merchant)"],
-      smPresent: false,
-      flaggedAt: "2025-08-02T14:15:00Z",
-      acknowledgedAt: "2025-08-02T16:45:00Z"
-    },
-    {
-      id: 3,
-      merchant: "Enterprise Dynamics",
-      merchantId: "ENT-003",
-      callDate: "2025-08-01",
-      callDuration: "28 mins",
-      msm: "Rachel Green",
-      msmEmail: "rachel.g@company.com",
-      assignedSM: "Tom Wilson",
-      smEmail: "tom.w@company.com",
-      transcript: "We love the platform but we're looking at UK Fulfillment and Netherlands Fulfillment options for our international expansion. We need DDP and DDU shipping solutions.",
-      detectedKeywords: ["UK Fulfillment", "Netherlands Fulfillment", "international", "DDP", "DDU"],
-      opportunityScore: 7.8,
-      status: "pending",
-      callRecordingUrl: "https://gong.io/call/12347",
-      attendees: ["Rachel Green (MSM)", "Michael Johnson (Merchant)"],
-      smPresent: false,
-      flaggedAt: "2025-08-01T11:20:00Z"
-    }
-  ];
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
   const solutionManagers = [
     "Mike Chen", "Emma Rodriguez", "Tom Wilson", "Jessica Lee", "Ryan Davis"
   ];
 
+  // Load data on component mount
   useEffect(() => {
-    // Simulate API call
-    setLoading(true);
-    setTimeout(() => {
-      setOpportunities(mockOpportunities);
-      setFilteredOpportunities(mockOpportunities);
-      setLoading(false);
-    }, 1000);
+    loadOpportunities();
+    loadKeywords();
+    checkConnection();
   }, []);
 
   useEffect(() => {
     filterOpportunities();
   }, [opportunities, filterStatus, selectedSM]);
+
+  // Check backend connection
+  const checkConnection = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/health`);
+      const data = await response.json();
+      setConnectionStatus(data.status === 'healthy' ? 'connected' : 'error');
+    } catch (error) {
+      setConnectionStatus('disconnected');
+      console.error('Backend connection failed:', error);
+    }
+  };
+
+  // Load opportunities from backend
+  const loadOpportunities = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/opportunities`);
+      const data = await response.json();
+      setOpportunities(data);
+    } catch (error) {
+      console.error('Failed to load opportunities:', error);
+      setOpportunities([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load keywords from backend
+  const loadKeywords = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/keywords`);
+      const data = await response.json();
+      setKeywords(data);
+    } catch (error) {
+      console.error('Failed to load keywords:', error);
+    }
+  };
+
+  // Trigger manual scan
+  const triggerScan = async (daysBack = 30) => {
+    setScanning(true);
+    setLastScanResult(null);
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/scan`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ daysBack })
+      });
+      
+      const result = await response.json();
+      setLastScanResult(result);
+      
+      // Reload opportunities after scan
+      await loadOpportunities();
+    } catch (error) {
+      console.error('Scan failed:', error);
+      setLastScanResult({ error: error.message });
+    } finally {
+      setScanning(false);
+    }
+  };
 
   const filterOpportunities = () => {
     let filtered = opportunities;
@@ -107,25 +109,52 @@ const GongExpansionTracker = () => {
     setFilteredOpportunities(filtered);
   };
 
-  const acknowledgeOpportunity = (id) => {
-    setOpportunities(prev => 
-      prev.map(opp => 
-        opp.id === id 
-          ? { ...opp, status: 'acknowledged', acknowledgedAt: new Date().toISOString() }
-          : opp
-      )
-    );
-  };
-
-  const addKeyword = () => {
-    if (newKeyword.trim() && !keywords.includes(newKeyword.trim().toLowerCase())) {
-      setKeywords(prev => [...prev, newKeyword.trim().toLowerCase()]);
-      setNewKeyword('');
+  const acknowledgeOpportunity = async (id) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/opportunities/${id}/acknowledge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ acknowledgedBy: 'User' })
+      });
+      
+      // Reload opportunities
+      await loadOpportunities();
+    } catch (error) {
+      console.error('Failed to acknowledge opportunity:', error);
     }
   };
 
-  const removeKeyword = (keyword) => {
-    setKeywords(prev => prev.filter(k => k !== keyword));
+  const addKeyword = async () => {
+    if (!newKeyword.trim()) return;
+    
+    try {
+      await fetch(`${API_BASE_URL}/api/keywords`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ keyword: newKeyword.trim().toLowerCase() })
+      });
+      
+      setNewKeyword('');
+      await loadKeywords();
+    } catch (error) {
+      console.error('Failed to add keyword:', error);
+    }
+  };
+
+  const removeKeyword = async (keyword) => {
+    try {
+      await fetch(`${API_BASE_URL}/api/keywords/${encodeURIComponent(keyword)}`, {
+        method: 'DELETE'
+      });
+      
+      await loadKeywords();
+    } catch (error) {
+      console.error('Failed to remove keyword:', error);
+    }
   };
 
   const getScoreColor = (score) => {
@@ -142,6 +171,15 @@ const GongExpansionTracker = () => {
     return `${baseClasses} bg-green-100 text-green-800`;
   };
 
+  const getConnectionBadge = () => {
+    if (connectionStatus === 'connected') {
+      return <span className="text-green-600 text-sm">● Connected</span>;
+    } else if (connectionStatus === 'disconnected') {
+      return <span className="text-red-600 text-sm">● Disconnected</span>;
+    }
+    return <span className="text-gray-600 text-sm">● Checking...</span>;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -155,9 +193,12 @@ const GongExpansionTracker = () => {
                 </div>
                 <h1 className="text-xl font-semibold text-gray-900">Expansion Opportunity Tracker</h1>
               </div>
-              <div className="hidden md:flex items-center space-x-1 text-sm text-gray-500">
-                <span>Powered by</span>
-                <span className="font-medium text-gray-900">Gong API</span>
+              <div className="hidden md:flex items-center space-x-4">
+                <div className="flex items-center space-x-1 text-sm text-gray-500">
+                  <span>Powered by</span>
+                  <span className="font-medium text-gray-900">Gong API</span>
+                </div>
+                {getConnectionBadge()}
               </div>
             </div>
             <div className="flex items-center space-x-4">
@@ -167,7 +208,10 @@ const GongExpansionTracker = () => {
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
                 )}
               </div>
-              <button className="p-2 text-gray-600 hover:text-gray-900">
+              <button 
+                onClick={checkConnection}
+                className="p-2 text-gray-600 hover:text-gray-900"
+              >
                 <Settings className="w-5 h-5" />
               </button>
             </div>
@@ -224,14 +268,14 @@ const GongExpansionTracker = () => {
                 <Calendar className="w-6 h-6 text-purple-600" />
               </div>
               <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">This Week</p>
+                <p className="text-sm font-medium text-gray-600">Total Found</p>
                 <p className="text-2xl font-semibold text-gray-900">{opportunities.length}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Filters and Controls */}
+        {/* Scan Controls */}
         <div className="bg-white p-6 rounded-lg shadow-sm mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
@@ -264,10 +308,39 @@ const GongExpansionTracker = () => {
               </div>
             </div>
 
-            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">
-              Scan New Calls
-            </button>
+            <div className="flex items-center space-x-2">
+              <button 
+                onClick={() => triggerScan(30)}
+                disabled={scanning}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50 flex items-center space-x-2"
+              >
+                {scanning ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                ) : (
+                  <Play className="w-4 h-4" />
+                )}
+                <span>{scanning ? 'Scanning...' : 'Scan Calls'}</span>
+              </button>
+            </div>
           </div>
+          
+          {lastScanResult && (
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+              <div className="text-sm">
+                {lastScanResult.error ? (
+                  <p className="text-red-600">❌ Scan failed: {lastScanResult.error}</p>
+                ) : (
+                  <p className="text-green-600">
+                    ✅ Scan complete: Processed {lastScanResult.processedCalls} calls, 
+                    found {lastScanResult.newOpportunities} new opportunities
+                    {lastScanResult.totalCallsAvailable && (
+                      <span className="text-gray-600"> (Total calls available: {lastScanResult.totalCallsAvailable})</span>
+                    )}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Keyword Management */}
@@ -312,12 +385,25 @@ const GongExpansionTracker = () => {
           {loading ? (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Scanning Gong recordings...</p>
+              <p className="mt-4 text-gray-600">Loading opportunities...</p>
             </div>
           ) : filteredOpportunities.length === 0 ? (
             <div className="text-center py-12">
               <AlertTriangle className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600">No expansion opportunities found with current filters.</p>
+              <p className="text-gray-600">
+                {opportunities.length === 0 
+                  ? "No expansion opportunities found. Try running a scan to analyze recent calls." 
+                  : "No expansion opportunities match your current filters."
+                }
+              </p>
+              {opportunities.length === 0 && (
+                <button
+                  onClick={() => triggerScan(30)}
+                  className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700"
+                >
+                  Scan Last 30 Days
+                </button>
+              )}
             </div>
           ) : (
             filteredOpportunities.map(opportunity => (
