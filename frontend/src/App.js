@@ -5,6 +5,7 @@ const GongExpansionTracker = () => {
   const [opportunities, setOpportunities] = useState([]);
   const [filteredOpportunities, setFilteredOpportunities] = useState([]);
   const [keywords, setKeywords] = useState([]);
+  const [solutionManagers, setSolutionManagers] = useState(["Andrew Costello", "Bryan Combest", "Dave Haran"]);
   const [newKeyword, setNewKeyword] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
   const [selectedSM, setSelectedSM] = useState('all');
@@ -15,14 +16,11 @@ const GongExpansionTracker = () => {
 
   const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
-  const solutionManagers = [
-    "Mike Chen", "Emma Rodriguez", "Tom Wilson", "Jessica Lee", "Ryan Davis"
-  ];
-
   // Load data on component mount
   useEffect(() => {
     loadOpportunities();
     loadKeywords();
+    loadSolutionManagers();
     checkConnection();
   }, []);
 
@@ -65,6 +63,18 @@ const GongExpansionTracker = () => {
       setKeywords(data);
     } catch (error) {
       console.error('Failed to load keywords:', error);
+    }
+  };
+
+  // Load solution managers from backend
+  const loadSolutionManagers = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/solution-managers`);
+      const data = await response.json();
+      setSolutionManagers(data);
+    } catch (error) {
+      console.error('Failed to load solution managers:', error);
+      // Keep default list if API fails
     }
   };
 
